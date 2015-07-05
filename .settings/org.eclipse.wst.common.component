@@ -2,6 +2,7 @@
     <wb-module deploy-name="PlayerSystem">
         <wb-resource deploy-path="/" source-path="/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources"/>
         <property name="context-root" value="player"/>
         <property name="java-output-path" value="/PlayerSystem/build/classes"/>
     </wb-module>

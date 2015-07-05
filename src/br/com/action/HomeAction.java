@@ -1,6 +1,7 @@
 package br.com.action;
 
 import br.com.entity.Movie;
+import br.com.resource.PlayerSystemProperties;
 import com.misc.service.Service;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,31 +15,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class HomeAction
- */
 @WebServlet(description = "Videos",urlPatterns = {"/home"})
 public class HomeAction extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    private static PlayerSystemProperties PROPERTIES = new PlayerSystemProperties();
+    private static String ROOT;
+    private static String VIDEO_PATH = "videoPath";
+    private static String MOVIE_TYPE = "mp4";
+    
     public HomeAction() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		doPost(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String param = request.getParameter("path");
 		Service service = new Service();
@@ -47,20 +39,22 @@ public class HomeAction extends HttpServlet {
 		Path sub = null;
 		
 		if(param == null){
-			entries = service.list(Paths.get("/media/HD-Windows/Videos"));
+			//entries = service.list(Paths.get("/media/HD-Windows/Videos"));
+			entries = service.list(Paths.get(getRoot()));
 		}else{
-			entries = service.list(Paths.get(param));			
+			service.findPath(Paths.get(getRoot()), param);
+			entries = service.list(service.getPath());
 			sub = Paths.get(param, "sub");
 			if(entries.contains(sub)){
 				entries.remove(sub);
 			}
 		}
-		
+
 		if(entries.isEmpty()){
 			entries = service.getFiles();
 			for(Path p: entries){
 				String type = p.getFileName().toString().substring(p.getFileName().toString().lastIndexOf(".")+1);
-				if(type.equals("mp4")){
+				if(type.equals(MOVIE_TYPE)){
 					Movie m = new Movie();
 					m.setPath(p);
 					m.setFileName(p.getFileName().toString());				
@@ -68,11 +62,26 @@ public class HomeAction extends HttpServlet {
 					movies.add(m);
 				}
 			}
-			request.setAttribute("movies", movies);									
+			request.setAttribute("movies", movies);
 		}else{
-			request.setAttribute("entries", entries);			
+			request.setAttribute("entries", entries);
 		}
 		RequestDispatcher rd = getServletContext().getRequestDispatcher("/view/home.jsp");
 		rd.forward(request,response);
 	}
+	
+	public PlayerSystemProperties getProperties(){
+		return PROPERTIES;
+	}
+	
+	public String getRoot() throws IOException{
+		ROOT = getProperties().getProperty("root");
+		return ROOT;
+	}
+	
+	public String getVideoPath(String type) throws IOException{
+		VIDEO_PATH = getProperties().getProperty(type);
+		return VIDEO_PATH;
+	}
+	
 }

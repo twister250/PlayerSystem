@@ -23,7 +23,7 @@
 				});
 			});
 		</script>
-		<title>Player</title>		
+		<title>Player</title>
 	</head>
 	<body>		
 		<form action="/player/video" method="POST" id="form">
@@ -41,7 +41,8 @@
 						<c:when test="${not empty entries}">
 							<c:forEach items="${entries}" var="entrie">						
 								<tr>						
-									<td><a href="#" onclick="submitForm('${entrie.parent}','${entrie.fileName}');"><c:out value="${entrie.fileName}"></c:out></a></td>
+									<!--<td><a href="#" onclick="submitForm('${entrie.parent}','${entrie.fileName}');"><c:out value="${entrie.fileName}"></c:out></a></td>-->
+									<td><a href="#" onclick="submitForm('${entrie.fileName}');"><c:out value="${entrie.fileName}"></c:out></a></td>
 									<td><c:out value="${entrie.fileName}"></c:out></td>
 									<td><c:out value="${entrie.parent}"></c:out></td>
 									<td>Pasta</td>
